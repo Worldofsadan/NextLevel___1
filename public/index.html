@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NextLevel___1— Premium Streetwear</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Bebas Neue', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+          colors: {
+            accent: '#E8FF00',
+            'accent-dark': '#c8db00',
+            dark: '#0A0A0A',
+            mid: '#1A1A1A',
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<!-- ═══════════════════════════ TOAST ════════════════════════════════════════ -->
+<div id="toast"></div>
+
+<!-- ═══════════════════════════ TICKER ═══════════════════════════════════════ -->
+<div class="ticker-wrap py-2 text-xs font-semibold tracking-widest uppercase z-50 relative">
+  <div class="ticker-move text-dark">
+    <span>🔥 Free Shipping on orders above ₹999</span>
+    <span>✦ New Drop Every Friday</span>
+    <span>🎁 Use code NEXTLEVEL10 for 10% OFF</span>
+    <span>⚡ Limited Stock — Shop Fast</span>
+    <span>🔥 Free Shipping on orders above ₹999</span>
+    <span>✦ New Drop Every Friday</span>
+    <span>🎁 Use code NEXTLEVEL10 for 10% OFF</span>
+    <span>⚡ Limited Stock — Shop Fast</span>
+    <span>insta account: next_level___1/worldofsadan/mr_fardeen_22</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ NAVBAR ═══════════════════════════════════════ -->
+<nav class="navbar sticky top-0 z-40 bg-white/95 border-b border-gray-100 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+
+    <!-- Logo -->
+    <div class="flex items-center gap-3 cursor-pointer" onclick="showPage('home')">
+      <!-- Logo Placeholder — replace src with your actual logo -->
+      <div class="w-8 h-8 bg-dark rounded flex items-center justify-center overflow-hidden">
+        <img src="YOUR_LOGO_HERE.png" alt="NL Logo"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+             class="w-full h-full object-cover" />
+        <span style="display:none; color:#E8FF00; font-size:12px; font-family:'Bebas Neue',sans-serif; align-items:center; justify-content:center; width:100%; height:100%;">NL</span>
+      </div>
+      <span class="font-display text-2xl tracking-wider text-dark">NextLevel___1</span>
+    </div>
+
+    <!-- Desktop Nav -->
+    <div class="hidden md:flex items-center gap-6 text-sm font-medium">
+      <a href="#products-section" class="hover:text-accent transition-colors cursor-pointer nav-link" onclick="showPage('home'); setTimeout(()=>document.getElementById('products-section').scrollIntoView({behavior:'smooth'}),100)">
+        <i class="fa-solid fa-shirt mr-1"></i> View Products
+      </a>
+      <a href="#yt-section" class="hover:text-accent transition-colors cursor-pointer" onclick="showPage('home'); setTimeout(()=>document.getElementById('yt-section').scrollIntoView({behavior:'smooth'}),100)">
+        <i class="fa-brands fa-youtube mr-1 text-red-500"></i> Watch YT Vdo
+      </a>
+      <button onclick="showPage('orders')" class="hover:text-accent transition-colors">
+        <i class="fa-solid fa-box mr-1"></i> My Orders
+      </button>
+    </div>
+
+    <!-- Right Actions -->
+    <div class="flex items-center gap-3">
+      <button id="cart-btn" onclick="openCart()" class="relative p-2 hover:bg-gray-100 rounded-full transition">
+        <i class="fa-solid fa-bag-shopping text-lg"></i>
+        <span id="cart-count" class="absolute -top-1 -right-1 bg-accent text-dark text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+      </button>
+
+      <!-- Auth area -->
+      <div id="auth-area" class="flex items-center gap-2">
+        <button onclick="openModal('login-modal')" class="hidden md:block text-sm font-medium border border-gray-200 px-4 py-1.5 rounded hover:border-dark transition">Login</button>
+        <button onclick="openModal('login-modal')" class="btn-primary text-sm px-4 py-1.5 rounded hidden md:block">Sign Up</button>
+        <button onclick="openModal('register-modal')" class="btn-primary text-sm px-4 py-1.5 rounded hidden md:block" id="register-nav-btn">Register</button>
+      </div>
+
+      <div id="user-area" class="hidden items-center gap-2">
+        <span id="user-name-display" class="text-sm font-medium hidden md:block"></span>
+        <button onclick="logout()" class="text-sm text-gray-500 hover:text-dark transition border border-gray-200 px-3 py-1.5 rounded">Logout</button>
+      </div>
+
+      <!-- Mobile menu -->
+      <button class="md:hidden p-2" onclick="toggleMobileMenu()">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 bg-white">
+    <div class="px-4 py-3 space-y-3 text-sm font-medium">
+      <a class="block py-2 border-b cursor-pointer" onclick="showPage('home'); closeMobileMenu(); setTimeout(()=>document.getElementById('products-section').scrollIntoView({behavior:'smooth'}),200)">
+        <i class="fa-solid fa-shirt mr-2"></i>View Products
+      </a>
+      <a class="block py-2 border-b cursor-pointer" onclick="showPage('home'); closeMobileMenu(); setTimeout(()=>document.getElementById('yt-section').scrollIntoView({behavior:'smooth'}),200)">
+        <i class="fa-brands fa-youtube mr-2 text-red-500"></i>Watch YT Vdo
+      </a>
+      <a class="block py-2 border-b cursor-pointer" onclick="showPage('orders'); closeMobileMenu()">
+        <i class="fa-solid fa-box mr-2"></i>My Orders
+      </a>
+      <a class="block py-2 cursor-pointer" onclick="openCart(); closeMobileMenu()">
+        <i class="fa-solid fa-bag-shopping mr-2"></i>Cart
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════ PAGES ════════════════════════════════════════ -->
+
+<!-- HOME PAGE -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <section class="hero-bg text-white py-24 px-4 relative">
+    <div class="relative z-10 max-w-7xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur rounded-full px-4 py-1.5 text-xs font-semibold tracking-widest uppercase mb-6">
+            <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+            New Drop Available
+          </div>
+          <h1 class="font-display text-7xl md:text-9xl leading-none tracking-wide mb-6">
+            NEXT<br/><span class="text-accent">LEVEL___1</span>
+          </h1>
+          <p class="text-gray-300 text-lg max-w-md mb-8 font-light leading-relaxed">
+            Premium streetwear crafted for those who refuse to blend in. Elevate your wardrobe. Elevate your game.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <button onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})"
+              class="btn-accent px-8 py-3 rounded text-sm uppercase tracking-wider">
+              Shop Now <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+            <button onclick="document.getElementById('yt-section').scrollIntoView({behavior:'smooth'})"
+              class="border border-white/30 hover:border-white px-8 py-3 rounded text-sm uppercase tracking-wider transition-colors">
+              <i class="fa-brands fa-youtube mr-2 text-red-400"></i> Watch NextLevel___1 TV
+            </button>
+          </div>
+          <div class="flex items-center gap-8 mt-10 text-sm text-gray-400">
+            <div><span class="text-2xl font-display text-accent">10K+</span><br/>Happy Customers</div>
+            <div class="w-px h-10 bg-white/20"></div>
+            <div><span class="text-2xl font-display text-accent">500+</span><br/>Products</div>
+            <div class="w-px h-10 bg-white/20"></div>
+            <div><span class="text-2xl font-display text-accent">4.6★</span><br/>Rating</div>
+          </div>
+        </div>
+        <div class="hidden md:block relative">
+          <div class="relative overflow-hidden rounded-2xl">
+            <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=700&q=80"
+                 alt="NextLevel Fashion" class="w-full h-[500px] object-cover opacity-80" />
+            <div class="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent"></div>
+            <div class="absolute bottom-6 left-6 right-6">
+              <div class="bg-white/10 backdrop-blur rounded-xl p-4 border border-white/20">
+                <p class="text-xs uppercase tracking-widest text-gray-300 mb-1">Featured Drop</p>
+                <p class="font-display text-xl text-accent">Urban Essentials Collection</p>
+                <p class="font-display text-xl text-accent">Gujrat|Mumbai|Kolkata|Asansol</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="py-12 border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="text-center p-4">
+        <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <i class="fa-solid fa-truck text-xl text-dark"></i>
+        </div>
+        <p class="font-semibold text-sm">Free Shipping</p>
+        <p class="text-xs text-gray-500 mt-1">On orders above ₹999</p>
+      </div>
+      <div class="text-center p-4">
+        <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <i class="fa-solid fa-rotate-left text-xl text-dark"></i>
+        </div>
+        <p class="font-semibold text-sm">Easy Returns</p>
+        <p class="text-xs text-gray-500 mt-1">7-day return policy</p>
+      </div>
+      <div class="text-center p-4">
+        <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <i class="fa-solid fa-shield-halved text-xl text-dark"></i>
+        </div>
+        <p class="font-semibold text-sm">Secure Payment</p>
+        <p class="text-xs text-gray-500 mt-1">100% safe checkout</p>
+      </div>
+      <div class="text-center p-4">
+        <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <i class="fa-solid fa-headset text-xl text-dark"></i>
+        </div>
+        <p class="font-semibold text-sm">24/7 Support</p>
+        <p class="text-xs text-gray-500 mt-1">We're always here</p>
+        <p class="font-semibold text-sm">mr_fardeen_22</p>
+        <p class="font-semibold text-sm">worldofsadan</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products-section" class="py-16 px-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-10">
+        <div class="accent-line mx-auto mb-4"></div>
+        <h2 class="font-display text-5xl tracking-wider mb-2">THE COLLECTION</h2>
+        <p class="text-gray-500 text-sm">Handpicked styles. Premium quality. Always fresh.</p>
+      </div>
+
+      <!-- Filters -->
+      <div class="flex flex-wrap items-center gap-3 mb-8">
+        <div class="flex-1 min-w-[200px]">
+          <div class="relative">
+            <input id="search-input" type="text" placeholder="Search products…"
+              class="w-full border border-gray-200 rounded-lg pl-10 pr-4 py-2.5 text-sm"
+              oninput="filterProducts()" />
+            <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+          </div>
+        </div>
+        <div id="category-filters" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <!-- Products Grid -->
+      <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div class="col-span-full flex justify-center py-16">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- YOUTUBE -->
+  <section id="yt-section" class="py-16 px-4 bg-dark text-white">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-10">
+        <div class="accent-line mx-auto mb-4"></div>
+        <h2 class="font-display text-5xl tracking-wider mb-2">NsxtLevel<span class="text-accent">___1</span></h2>
+        <p class="text-gray-400 text-sm">Behind the brand — drops, lookbooks, and more.</p>
+      </div>
+      <div class="yt-wrapper shadow-2xl">
+        <!--
+          ╔════════════════════════════════════════════════════════╗
+          ║  REPLACE THE src BELOW WITH YOUR YOUTUBE EMBED LINK   ║
+          ║  Example: https://www.youtube.com/embed/dQw4w9WgXcQ   ║
+          ╚════════════════════════════════════════════════════════╝
+        -->
+        <iframe
+          src="https://www.youtube.com/embed/LJxjJKC2_WQ"
+          title="NextLevel___1"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <p class="text-center text-gray-500 text-xs mt-4">
+        📺 Subscribe to <strong class="text-accent">NextLevel___1</strong> for exclusive drops & lookbooks
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-dark text-white py-10 px-4 border-t border-white/10">
+    <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-8">
+      <div>
+        <h3 class="font-display text-2xl tracking-wider mb-3">NEXT<span class="text-accent">LEVEL</span>___1</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Premium streetwear for those who live on another level. Made with passion. Worn with pride.</p>
+        <div class="flex gap-3 mt-4">
+          <a href="https://www.instagram.com/next_level____1" class="w-9 h-9 border border-white/20 rounded-full flex items-center justify-center hover:border-accent hover:text-accent transition-colors text-sm">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+          <a href="https://www.youtube.com/@NEXTLEVEL____1" class="w-9 h-9 border border-white/20 rounded-full flex items-center justify-center hover:border-accent hover:text-accent transition-colors text-sm">
+            <i class="fa-brands fa-youtube"></i>
+          </a>
+          <a href="#" class="w-9 h-9 border border-white/20 rounded-full flex items-center justify-center hover:border-accent hover:text-accent transition-colors text-sm">
+            <i class="fa-brands fa-twitter"></i>
+          </a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm uppercase tracking-widest mb-4 text-gray-300">Quick Links</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li><a href="#" class="hover:text-accent transition-colors">Home</a></li>
+          <li><a href="#" class="hover:text-accent transition-colors" onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})">Products</a></li>
+          <li><a href="#" class="hover:text-accent transition-colors" onclick="showPage('orders')">My Orders</a></li>
+          <li><a href="#yt-section" class="hover:text-accent transition-colors">NextLevel TV</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm uppercase tracking-widest mb-4 text-gray-300">Contact</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li><i class="fa-solid fa-envelope mr-2"></i>akbarsadan10@gmail.com</li>
+          <li><i class="fa-solid fa-phone mr-2"></i> +91 XXXXXXXX21</li>
+          <li><i class="fa-solid fa-location-dot mr-2"></i> Mumbai,Kolkata,Gujrat,Asansol, India</li>
+        </ul>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto mt-8 pt-6 border-t border-white/10 text-center text-xs text-gray-500">
+      © 2026 NextLevel___1. All rights reserved. Built with ❤️ for the streets by worldofsadan.
+    </div>
+  </footer>
+</div>
+
+<!-- ORDERS PAGE -->
+<div id="page-orders" class="page min-h-screen">
+  <div class="max-w-4xl mx-auto px-4 py-10">
+    <button onclick="showPage('home')" class="flex items-center gap-2 text-sm text-gray-500 hover:text-dark mb-6 transition-colors">
+      <i class="fa-solid fa-arrow-left"></i> Back to Shop
+    </button>
+    <div class="flex items-center gap-3 mb-2">
+      <div class="accent-line"></div>
+    </div>
+    <h2 class="font-display text-4xl tracking-wider mb-1">MY ORDERS</h2>
+    <p class="text-gray-500 text-sm mb-8">Track all your NextLevel orders</p>
+
+    <div id="orders-list">
+      <div class="flex justify-center py-16"><div class="spinner"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ CART SIDEBAR ═══════════════════════════════════ -->
+<div id="cart-overlay" class="fixed inset-0 bg-black/50 z-40 hidden" onclick="closeCart()"></div>
+
+<div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full max-w-sm bg-white z-50 shadow-2xl flex flex-col">
+  <div class="flex items-center justify-between p-5 border-b border-gray-100">
+    <h3 class="font-display text-2xl tracking-wider">YOUR CART</h3>
+    <button onclick="closeCart()" class="p-2 hover:bg-gray-100 rounded-full transition">
+      <i class="fa-solid fa-xmark text-lg"></i>
+    </button>
+  </div>
+
+  <div id="cart-items-list" class="flex-1 overflow-y-auto p-5 space-y-4">
+    <div class="text-center text-gray-400 py-16">
+      <i class="fa-solid fa-bag-shopping text-4xl mb-3 opacity-30"></i>
+      <p class="text-sm">Your cart is empty</p>
+      <p class="text-sm">Please Collect items</p>
+    </div>
+  </div>
+
+  <div id="cart-footer" class="hidden p-5 border-t border-gray-100 space-y-4">
+    <div class="space-y-1 text-sm">
+      <div class="flex justify-between text-gray-500">
+        <span>Subtotal</span>
+        <span id="cart-subtotal">₹0</span>
+      </div>
+      <div class="flex justify-between text-green-600 font-medium">
+        <span>You Save</span>
+        <span id="cart-savings">₹0</span>
+      </div>
+      <div class="flex justify-between font-bold text-base border-t pt-2 mt-2">
+        <span>Total</span>
+        <span id="cart-total">₹0</span>
+      </div>
+    </div>
+    <button onclick="proceedToCheckout()" class="btn-primary w-full py-3 rounded text-sm uppercase tracking-wider">
+      Proceed to Checkout <i class="fa-solid fa-arrow-right ml-2"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MODALS ════════════════════════════════════════ -->
+
+<!-- LOGIN MODAL -->
+<div id="login-modal" class="fixed inset-0 modal-backdrop z-50 hidden flex items-center justify-center p-4">
+  <div class="modal-box bg-white rounded-2xl w-full max-w-md">
+    <div class="p-8">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="font-display text-3xl tracking-wider">WELCOME BACK</h3>
+        <button onclick="closeModal('login-modal')" class="text-gray-400 hover:text-dark"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs font-semibold uppercase tracking-wider text-gray-500 block mb-1.5">Email</label>
+          <input id="login-email" type="email" placeholder="your@email.com"
+            class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold uppercase tracking-wider text-gray-500 block mb-1.5">Password</label>
+          <input id="login-password" type="password" placeholder="••••••••"
+            class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm"
+            onkeydown="if(event.key==='Enter')doLogin()" />
+        </div>
+        <button onclick="doLogin()" class="btn-primary w-full py-3 rounded-lg text-sm uppercase tracking-wider">
+          Sign In
+        </button>
+      </div>
+      <p class="text-center text-sm text-gray-500 mt-5">
+        New here?
+        <button onclick="closeModal('login-modal');openModal('register-modal')" class="text-dark font-semibold hover:underline">Create Account</button>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div id="register-modal" class="fixed inset-0 modal-backdrop z-50 hidden flex items-center justify-center p-4">
+  <div class="modal-box bg-white rounded-2xl w-full max-w-md">
+    <div class="p-8">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="font-display text-3xl tracking-wider">JOIN US</h3>
+        <button onclick="closeModal('register-modal')" class="text-gray-400 hover:text-dark"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs font-semibold uppercase tracking-wider text-gray-500 block mb-1.5">Full Name</label>
+          <input id="reg-name" type="text" placeholder="Your Name"
+            class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold uppercase tracking-wider text-gray-500 block mb-1.5">Email</label>
+          <input id="reg-email" type="email" placeholder="your@email.com"
+            class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold uppercase tracking-wider text-gray-500 block mb-1.5">Password</label>
+          <input id="reg-password" type="password" placeholder="Min 6 characters"
+            class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm"
+            onkeydown="if(event.key==='Enter')doRegister()" />
+        </div>
+        <button onclick="doRegister()" class="btn-primary w-full py-3 rounded-lg text-sm uppercase tracking-wider">
+          Create Account
+        </button>
+      </div>
+      <p class="text-center text-sm text-gray-500 mt-5">
+        Already have an account?
+        <button onclick="closeModal('register-modal');openModal('login-modal')" class="text-dark font-semibold hover:underline">Sign In</button>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div id="checkout-modal" class="fixed inset-0 modal-backdrop z-50 hidden flex items-center justify-center p-4">
+  <div class="modal-box bg-white rounded-2xl w-full max-w-md">
+    <div class="p-8">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="font-display text-3xl tracking-wider">CHECKOUT</h3>
+        <button onclick="closeModal('checkout-modal')" class="text-gray-400 hover:text-dark"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs font-semibold uppercase tracking-wider text-gray-500 block mb-1.5">Delivery Address</label>
+          <textarea id="checkout-address" rows="3" placeholder="Enter your full delivery address…"
+            class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm resize-none"></textarea>
+        </div>
+        <div>
+          <label class="text-xs font-semibold uppercase tracking-wider text-gray-500 block mb-1.5">Payment Method</label>
+          <select id="checkout-payment" class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm">
+            <option value="COD">Cash on Delivery</option>
+            <option value="UPI">UPI</option>
+            <option value="Card">Credit / Debit Card</option>
+            <option value="NetBanking">Net Banking</option>
+          </select>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-4 text-sm space-y-1">
+          <div class="flex justify-between text-gray-500"><span>Subtotal</span><span id="checkout-subtotal">₹0</span></div>
+          <div class="flex justify-between text-green-600 font-medium"><span>Savings</span><span id="checkout-savings">₹0</span></div>
+          <div class="flex justify-between font-bold border-t pt-2 mt-2"><span>Total Payable</span><span id="checkout-total">₹0</span></div>
+        </div>
+        <button onclick="placeOrder()" class="btn-accent w-full py-3 rounded-lg text-sm font-bold uppercase tracking-wider">
+          <i class="fa-solid fa-bag-shopping mr-2"></i> Place Order
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT DETAIL MODAL -->
+<div id="product-modal" class="fixed inset-0 modal-backdrop z-50 hidden flex items-center justify-center p-4">
+  <div class="modal-box bg-white rounded-2xl w-full max-w-2xl">
+    <div class="relative">
+      <button onclick="closeModal('product-modal')" class="absolute top-4 right-4 z-10 w-9 h-9 bg-white/90 rounded-full flex items-center justify-center shadow hover:bg-white transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div id="product-modal-content" class="grid md:grid-cols-2"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ JAVASCRIPT ════════════════════════════════════ -->
+<script src="script.js"></script>
+
+</body>
+</html>
