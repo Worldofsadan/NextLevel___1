@@ -639,8 +639,10 @@ function closeModal(id) {
   document.getElementById(id).classList.add('hidden');
   document.body.style.overflow = '';
 }
-document.querySelectorAll('[id$="-modal"]').forEach(m => {
-  m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[id$="-modal"]').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
+  });
 });
 
 // ── Mobile menu ───────────────────────────────────────────────────────────────
