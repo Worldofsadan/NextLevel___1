@@ -1,31 +1,25 @@
-const sqlite3 = require('sqlite3').verbose();
+const initSqlJs = require('sql.js');
+const fs = require('fs');
 const path = require('path');
 
-const dbPath = path.join(__dirname, 'nextlevel.db');
-const db = new sqlite3.Database(dbPath);
+// Initialize database
+async function initDB() {
+  const SQL = await initSqlJs();
+  const dbPath = path.join(__dirname, 'nextlevel.db');
 
-db.run_p = (sql, params = []) =>
-  new Promise((res, rej) =>
-    db.run(sql, params, function (err) {
-      if (err) rej(err);
-      else res({ lastInsertRowid: this.lastID, changes: this.changes });
-    })
-  );
+  let filebuffer = null;
+  try {
+    filebuffer = fs.readFileSync(dbPath);
+  } catch (e) {
+    // Database doesn't exist yet
+  }
 
-db.get_p = (sql, params = []) =>
-  new Promise((res, rej) =>
-    db.get(sql, params, (err, row) => (err ? rej(err) : res(row)))
-  );
+  const db = new SQL.Database(filebuffer);
 
-db.all_p = (sql, params = []) =>
-  new Promise((res, rej) =>
-    db.all(sql, params, (err, rows) => (err ? rej(err) : res(rows)))
-  );
+  // Enable foreign keys
+  db.run('PRAGMA foreign_keys = ON');
 
-db.serialize(() => {
-  db.run(`PRAGMA journal_mode = WAL`);
-  db.run(`PRAGMA foreign_keys = ON`);
-
+  // Create tables
   db.run(`CREATE TABLE IF NOT EXISTS users (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     name        TEXT    NOT NULL,
@@ -79,9 +73,9 @@ db.serialize(() => {
     price        REAL    NOT NULL
   )`);
 
-  db.get('SELECT COUNT(*) as cnt FROM products', [], (err, row) => {
-    if (err || row.cnt > 0) return;
-
+  // Seed products if empty
+  const result = db.exec('SELECT COUNT(*) as cnt FROM products');
+  if (result.length === 0 || result[0].values[0][0] === 0) {
     const products = [
       ['Urban Oversized Tee','T-Shirts','Premium 100% cotton oversized tee with dropped shoulders. Perfect for a relaxed streetwear look. Pre-washed for extra softness.',1299,30,909,'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80','S,M,L,XL'],
       ['Classic Denim Jacket','Jackets','Vintage-washed denim jacket with brass buttons and chest pockets. A timeless wardrobe essential for any season.',3999,25,2999,'https://images.unsplash.com/photo-1543076447-215ad9ba6923?w=600&q=80','S,M,L,XL'],
@@ -95,10 +89,60 @@ db.serialize(() => {
       ['Streetwear Co-ord Set','Sets','Matching oversized shirt and wide-leg pant set in textured fabric. Head-to-toe look that turns heads. Limited edition drop.',4999,20,3999,'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80','S,M,L,XL'],
     ];
 
-    const stmt = `INSERT INTO products (name, category, description, original_price, discount_pct, final_price, image_url, sizes) VALUES (?,?,?,?,?,?,?,?)`;
-    products.forEach(p => db.run(stmt, p));
+    const insertProduct = db.prepare('INSERT INTO products (name, category, description, original_price, discount_pct, final_price, image_url, sizes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+    products.forEach(product => insertProduct.run(product));
     console.log('✅ Products seeded successfully');
-  });
-});
+  }
 
-module.exports = db;
+  // Save database to file periodically
+  setInterval(() => {
+    const data = db.export();
+    const buffer = Buffer.from(data);
+    fs.writeFileSync(dbPath, buffer);
+  }, 5000); // Save every 5 seconds
+
+  // Add helper functions
+  db.run_p = (sql, params = []) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const stmt = db.prepare(sql);
+        const result = stmt.run(params);
+        resolve({ lastInsertRowid: result.insertId, changes: result.changes });
+      } catch (err) {
+        reject(err);
+      }
+    });
+  };
+
+  db.get_p = (sql, params = []) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const stmt = db.prepare(sql);
+        const result = stmt.getAsObject(params);
+        resolve(result);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  };
+
+  db.all_p = (sql, params = []) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const stmt = db.prepare(sql);
+        const results = [];
+        while (stmt.step()) {
+          results.push(stmt.getAsObject());
+        }
+        resolve(results);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  };
+
+  return db;
+}
+
+// Export the initialized database
+module.exports = initDB();
