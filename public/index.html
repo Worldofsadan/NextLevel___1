@@ -519,17 +519,77 @@
 </div>
 
 <!-- ORDERS PAGE -->
-<div id="page-orders" class="page min-h-screen">
+<!-- ORDERS PAGE -->
+<div id="page-orders" class="page min-h-screen bg-gray-50">
   <div class="max-w-4xl mx-auto px-4 py-10">
+
+    <!-- Header -->
     <button onclick="showPage('home')" class="flex items-center gap-2 text-sm text-gray-500 hover:text-dark mb-6 transition-colors">
       <i class="fa-solid fa-arrow-left"></i> Back to Shop
     </button>
-    <div class="flex items-center gap-3 mb-2">
-      <div class="accent-line"></div>
-    </div>
+    <div class="accent-line mb-3"></div>
     <h2 class="font-display text-4xl tracking-wider mb-1">MY ORDERS</h2>
     <p class="text-gray-500 text-sm mb-8">Track all your NextLevel orders</p>
 
+    <!-- Order Tracking Modal -->
+    <div id="tracking-modal" class="fixed inset-0 modal-backdrop z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl w-full max-w-md modal-box">
+        <div class="p-6">
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="font-display text-2xl tracking-wider">TRACK ORDER</h3>
+              <p id="tracking-order-id" class="text-xs text-gray-400 mt-0.5"></p>
+            </div>
+            <button onclick="closeModal('tracking-modal')" class="text-gray-400 hover:text-dark">
+              <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+          </div>
+
+          <!-- Progress Steps -->
+          <div id="tracking-steps" class="mb-6"></div>
+
+          <!-- Delivery Info -->
+          <div class="bg-gray-50 rounded-xl p-4 mb-4">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Delivery Details</p>
+            <div class="space-y-2 text-sm">
+              <div class="flex gap-2">
+                <i class="fa-solid fa-location-dot text-gray-400 mt-0.5 w-4"></i>
+                <span id="tracking-address" class="text-gray-700"></span>
+              </div>
+              <div class="flex gap-2">
+                <i class="fa-solid fa-credit-card text-gray-400 mt-0.5 w-4"></i>
+                <span id="tracking-payment" class="text-gray-700"></span>
+              </div>
+              <div class="flex gap-2">
+                <i class="fa-solid fa-calendar text-gray-400 mt-0.5 w-4"></i>
+                <span id="tracking-date" class="text-gray-700"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Items in Order -->
+          <div class="bg-gray-50 rounded-xl p-4">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Items Ordered</p>
+            <div id="tracking-items" class="space-y-2"></div>
+            <div class="border-t border-dashed mt-3 pt-3 flex justify-between text-sm font-bold">
+              <span>Total Paid</span>
+              <span id="tracking-total"></span>
+            </div>
+          </div>
+
+          <!-- Cancel Button -->
+          <div id="tracking-cancel-wrap" class="mt-4 hidden">
+            <button id="tracking-cancel-btn"
+              class="w-full text-sm text-red-500 border border-red-200 px-4 py-2.5 rounded-xl hover:bg-red-50 transition">
+              <i class="fa-solid fa-xmark mr-1"></i> Cancel This Order
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders List -->
     <div id="orders-list">
       <div class="flex justify-center py-16"><div class="spinner"></div></div>
     </div>

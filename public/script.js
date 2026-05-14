@@ -403,6 +403,164 @@ async function loadOrders() {
     return;
   }
 
+  const statusConfig = {
+    Ordered:   { color: 'bg-blue-50 text-blue-600',   icon: 'fa-clock',         label: 'Ordered' },
+    Shipping:  { color: 'bg-yellow-50 text-yellow-600', icon: 'fa-truck',        label: 'Out for Delivery' },
+    Done:      { color: 'bg-green-50 text-green-600',  icon: 'fa-circle-check',  label: 'Delivered' },
+    Cancelled: { color: 'bg-red-50 text-red-500',      icon: 'fa-circle-xmark',  label: 'Cancelled' },
+  };
+
+  ol.innerHTML = orders.map(o => {
+    const cfg = statusConfig[o.status] || statusConfig.Ordered;
+    const firstItem = o.items?.[0];
+    return `
+    <div class="bg-white border border-gray-100 rounded-2xl p-5 mb-4 hover:shadow-md transition-shadow cursor-pointer"
+         onclick="openTrackingModal(${o.id})">
+      <div class="flex items-start justify-between gap-3 mb-4">
+        <div>
+          <p class="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Order #${o.id}</p>
+          <p class="font-semibold text-sm">${new Date(o.created_at).toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric'})}</p>
+        </div>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${cfg.color}">
+          <i class="fa-solid ${cfg.icon} text-[10px]"></i> ${cfg.label}
+        </span>
+      </div>
+
+      <!-- Mini Progress Bar -->
+      ${o.status !== 'Cancelled' ? `
+      <div class="flex items-center gap-0 mb-4">
+        ${['Ordered','Shipping','Done'].map((s, i) => {
+          const steps = ['Ordered','Shipping','Done'];
+          const cur = steps.indexOf(o.status);
+          const done = i <= cur;
+          return `
+          <div class="flex items-center ${i < 2 ? 'flex-1' : ''}">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 transition-all
+              ${done ? 'bg-dark text-accent' : 'bg-gray-100 text-gray-400'}">
+              ${done ? '✓' : i+1}
+            </div>
+            ${i < 2 ? `<div class="flex-1 h-0.5 mx-1 ${i < cur ? 'bg-dark' : 'bg-gray-200'}"></div>` : ''}
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="flex justify-between text-[10px] text-gray-400 mb-4 -mt-2">
+        <span>Ordered</span><span>Shipping</span><span>Delivered</span>
+      </div>` : ''}
+
+      <!-- Item Preview -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+          <i class="fa-solid fa-box text-gray-300"></i>
+          <span>${o.item_count} item${o.item_count > 1 ? 's' : ''}
+            ${firstItem ? `— ${firstItem.product_name}${o.item_count > 1 ? ` +${o.item_count - 1} more` : ''}` : ''}
+          </span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-sm">₹${o.total_amount.toLocaleString('en-IN')}</span>
+          <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Store orders in state for modal
+  state.orders = orders;
+}
+
+function openTrackingModal(orderId) {
+  const o = state.orders.find(x => x.id === orderId);
+  if (!o) return;
+
+  document.getElementById('tracking-order-id').textContent = `Order #${o.id}`;
+  document.getElementById('tracking-address').textContent = o.address || 'N/A';
+  document.getElementById('tracking-payment').textContent = o.payment_method || 'COD';
+  document.getElementById('tracking-date').textContent = new Date(o.created_at).toLocaleString('en-IN', {
+    day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+  });
+  document.getElementById('tracking-total').textContent = '₹' + o.total_amount.toLocaleString('en-IN');
+
+  // Items
+  document.getElementById('tracking-items').innerHTML = (o.items || []).map(item => `
+    <div class="flex justify-between text-sm">
+      <span class="text-gray-600">${item.product_name}
+        <span class="text-gray-400 text-xs">(${item.size} × ${item.quantity})</span>
+      </span>
+      <span class="font-medium">₹${(item.price * item.quantity).toLocaleString('en-IN')}</span>
+    </div>
+  `).join('');
+
+  // Steps
+  const steps = [
+    { key: 'Ordered',  icon: 'fa-bag-shopping', label: 'Order Placed',      desc: 'Your order has been placed' },
+    { key: 'Shipping', icon: 'fa-truck',         label: 'Out for Delivery',  desc: 'Rider is on the way' },
+    { key: 'Done',     icon: 'fa-circle-check',  label: 'Delivered',         desc: 'Order delivered successfully' },
+  ];
+  const currentIdx = o.status === 'Cancelled' ? -1 : steps.findIndex(s => s.key === o.status);
+
+  if (o.status === 'Cancelled') {
+    document.getElementById('tracking-steps').innerHTML = `
+      <div class="flex items-center gap-3 bg-red-50 border border-red-100 rounded-xl p-4">
+        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid fa-circle-xmark text-red-500"></i>
+        </div>
+        <div>
+          <p class="font-semibold text-red-600 text-sm">Order Cancelled</p>
+          <p class="text-xs text-red-400">This order has been cancelled</p>
+        </div>
+      </div>`;
+  } else {
+    document.getElementById('tracking-steps').innerHTML = steps.map((s, i) => {
+      const done = i < currentIdx;
+      const active = i === currentIdx;
+      const pending = i > currentIdx;
+      return `
+      <div class="flex gap-4 ${i < steps.length - 1 ? 'mb-1' : ''}">
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all
+            ${done ? 'bg-accent border-2 border-dark' :
+              active ? 'bg-dark text-accent' :
+              'bg-gray-100 text-gray-300'}">
+            <i class="fa-solid ${done ? 'fa-check text-dark' : s.icon + (active ? ' text-accent' : '')} text-sm"></i>
+          </div>
+          ${i < steps.length - 1 ? `<div class="w-0.5 h-8 mt-1 ${done ? 'bg-dark' : 'bg-gray-200'}"></div>` : ''}
+        </div>
+        <div class="pt-2 pb-6">
+          <p class="text-sm font-semibold ${pending ? 'text-gray-400' : 'text-dark'}">${s.label}</p>
+          <p class="text-xs ${pending ? 'text-gray-300' : 'text-gray-500'}">${s.desc}</p>
+          ${active ? `<span class="inline-block mt-1 text-[10px] bg-accent/20 text-dark px-2 py-0.5 rounded-full font-medium">Current Status</span>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Cancel button
+  const cancelWrap = document.getElementById('tracking-cancel-wrap');
+  const cancelBtn = document.getElementById('tracking-cancel-btn');
+  if (o.status === 'Ordered') {
+    cancelWrap.classList.remove('hidden');
+    cancelBtn.onclick = () => cancelOrder(o.id);
+  } else {
+    cancelWrap.classList.add('hidden');
+  }
+
+  openModal('tracking-modal');
+}
+
+  const res = await api('GET', '/api/orders/my');
+  if (!res.success) return;
+
+  const orders = res.orders;
+  const ol = document.getElementById('orders-list');
+
+  if (!orders.length) {
+    ol.innerHTML = `<div class="text-center py-16">
+      <i class="fa-solid fa-box-open text-4xl mb-4 opacity-30"></i>
+      <p class="text-gray-500 mb-4">You haven't placed any orders yet.</p>
+      <button onclick="showPage('home')" class="btn-primary px-8 py-3 rounded text-sm uppercase tracking-wider">Shop Now</button>
+    </div>`;
+    return;
+  }
+
   const statusFlow = ['Ordered', 'Shipping', 'Done'];
   ol.innerHTML = orders.map(o => {
     const statusColors = { Ordered: 'status-ordered', Shipping: 'status-shipping', Done: 'status-done', Cancelled: 'status-cancelled' };
