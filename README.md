@@ -1,13 +1,5 @@
 # 🛍️ NextLevel — Premium Streetwear E-Commerce Platform
 
-
-
- https://worldofsadan.github.io/NextLevel___1/
-
-
-Team Member :
-SADAN AKBAR ANSARI(Full Stack Web Developer)
-
 <div align="center">
   <img src="https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=nodedotjs" />
   <img src="https://img.shields.io/badge/Express.js-4.18-000000?style=for-the-badge&logo=express" />
@@ -73,7 +65,7 @@ npm -v    # should be 9+
 ### 2. Clone / Download the Project
 
 ```bash
-git clone https://github.com/worldofsadan/nextlevel-store.git
+git clone https://github.com/YOUR_USERNAME/nextlevel-store.git
 cd nextlevel-store
 ```
 
@@ -311,7 +303,7 @@ git add .
 git commit -m "🚀 Initial NextLevel store"
 
 # Add remote & push
-git remote add origin https://github.com/worldofsadan/nextlevel-store.git
+git remote add origin https://github.com/YOUR_USERNAME/nextlevel-store.git
 git branch -M main
 git push -u origin main
 ```
@@ -363,11 +355,11 @@ npm start
 
 ## 📝 License
 
-MIT © worldofsadan
+MIT © 2024 NextLevel Store
 
 ---
 
 <div align="center">
-  Built with ❤️ for the streets by team worldofsadan.<br/>
+  Built with ❤️ for the streets.<br/>
   <strong>NEXTLEVEL — Elevate Your Wardrobe.</strong>
 </div>
