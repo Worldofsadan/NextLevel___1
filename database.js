@@ -144,5 +144,20 @@ async function initDB() {
   return db;
 }
 
-// Export the initialized database
-module.exports = initDB();
+const dbPromise = initDB();
+
+module.exports = {
+  ready: dbPromise,
+  run_p: async (...args) => {
+    const db = await dbPromise;
+    return db.run_p(...args);
+  },
+  get_p: async (...args) => {
+    const db = await dbPromise;
+    return db.get_p(...args);
+  },
+  all_p: async (...args) => {
+    const db = await dbPromise;
+    return db.all_p(...args);
+  }
+};

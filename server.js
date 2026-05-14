@@ -2,12 +2,12 @@ const express = require('express');
 const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
 const path = require('path');
+const db = require('./database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Initialize DB on startup
-require('./database');
 
 // ─── MIDDLEWARE ───────────────────────────────────────────────────────────────
 
@@ -41,8 +41,13 @@ app.get('*', (req, res) => {
 
 // ─── START ────────────────────────────────────────────────────────────────────
 
-app.listen(PORT, () => {
-  console.log(`\n🚀 NextLevel Store running at http://localhost:${PORT}`);
-  console.log(`📦 Database: SQLite (nextlevel.db)`);
-  console.log(`🛍️  API ready at /api/\n`);
+db.ready.then(() => {
+  app.listen(PORT, () => {
+    console.log(`\n🚀 NextLevel Store running at http://localhost:${PORT}`);
+    console.log(`📦 Database: SQLite (nextlevel.db)`);
+    console.log(`🛍️  API ready at /api/\n`);
+  });
+}).catch(err => {
+  console.error('Failed to initialize database:', err);
+  process.exit(1);
 });
