@@ -52,6 +52,49 @@
   </div>
 </div>
 
+<!-- FLASH SALE BANNER -->
+<div id="flash-sale-bar" class="bg-dark text-white py-3 px-4 relative">
+  <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-4 text-center">
+    <div class="flex items-center gap-2">
+      <span class="text-accent text-xl">⚡</span>
+      <span class="font-display text-xl tracking-wider">FLASH SALE</span>
+      <span class="badge-discount ml-2">EXTRA 10% OFF</span>
+    </div>
+    <div class="flex items-center gap-2 text-sm">
+      <span class="text-gray-400">Use Code:</span>
+      <span id="promo-code"
+        class="bg-accent text-dark font-bold px-3 py-1 rounded tracking-widest cursor-pointer text-xs"
+        onclick="copyCode()" title="Click to copy">
+        NEXTLEVEL10
+      </span>
+      <span id="copy-msg" class="text-xs text-green-400 hidden">Copied! ✓</span>
+    </div>
+    <div class="flex items-center gap-2 text-sm">
+      <span class="text-gray-400">Ends in:</span>
+      <div class="flex gap-1">
+        <div class="bg-white/10 rounded px-2 py-1 text-center min-w-[40px]">
+          <span id="cd-hours" class="font-display text-lg text-accent block leading-none">00</span>
+          <span class="text-[9px] text-gray-400 uppercase tracking-wider">hrs</span>
+        </div>
+        <span class="text-accent font-bold self-start mt-1">:</span>
+        <div class="bg-white/10 rounded px-2 py-1 text-center min-w-[40px]">
+          <span id="cd-mins" class="font-display text-lg text-accent block leading-none">00</span>
+          <span class="text-[9px] text-gray-400 uppercase tracking-wider">min</span>
+        </div>
+        <span class="text-accent font-bold self-start mt-1">:</span>
+        <div class="bg-white/10 rounded px-2 py-1 text-center min-w-[40px]">
+          <span id="cd-secs" class="font-display text-lg text-accent block leading-none">00</span>
+          <span class="text-[9px] text-gray-400 uppercase tracking-wider">sec</span>
+        </div>
+      </div>
+    </div>
+    <button onclick="document.getElementById('flash-sale-bar').style.display='none'"
+      class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-lg leading-none">
+      ✕
+    </button>
+  </div>
+</div>
+
 <!-- ═══════════════════════════ NAVBAR ═══════════════════════════════════════ -->
 <nav class="navbar sticky top-0 z-40 bg-white/95 border-b border-gray-100 shadow-sm">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
@@ -495,6 +538,41 @@
   </div>
 </div>
 
+
+<script>
+(function () {
+  const SALE_HOURS = 5;
+  let endTime = localStorage.getItem('nl_sale_end');
+  if (!endTime || Date.now() > parseInt(endTime)) {
+    endTime = Date.now() + SALE_HOURS * 60 * 60 * 1000;
+    localStorage.setItem('nl_sale_end', endTime);
+  }
+  function updateCountdown() {
+    const diff = parseInt(endTime) - Date.now();
+    if (diff <= 0) {
+      document.getElementById('flash-sale-bar').style.display = 'none';
+      localStorage.removeItem('nl_sale_end');
+      return;
+    }
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cd-hours').textContent = String(h).padStart(2, '0');
+    document.getElementById('cd-mins').textContent  = String(m).padStart(2, '0');
+    document.getElementById('cd-secs').textContent  = String(s).padStart(2, '0');
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+})();
+
+function copyCode() {
+  navigator.clipboard.writeText('NEXTLEVEL10').then(() => {
+    const msg = document.getElementById('copy-msg');
+    msg.classList.remove('hidden');
+    setTimeout(() => msg.classList.add('hidden'), 2000);
+  });
+}
+</script>
 <!-- ═══════════════════════════ JAVASCRIPT ════════════════════════════════════ -->
 <script src="script.js"></script>
 
