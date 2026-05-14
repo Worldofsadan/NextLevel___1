@@ -314,14 +314,38 @@ function proceedToCheckout() {
   if (!state.user) { closeCart(); openModal('login-modal'); return; }
   if (!state.cart.length) return toast('Cart is empty');
 
+  const PLATFORM_FEE = 5;
+  const DELIVERY_FREE_ABOVE = 999;
+
   let subtotal = 0, savings = 0;
   state.cart.forEach(i => {
     subtotal += i.price * i.quantity;
     savings += (i.original_price - i.price) * i.quantity;
   });
+
+  const deliveryFee = subtotal >= DELIVERY_FREE_ABOVE ? 0 : 49;
+  const total = subtotal + PLATFORM_FEE + deliveryFee;
+
   document.getElementById('checkout-subtotal').textContent = '₹' + subtotal.toLocaleString('en-IN');
-  document.getElementById('checkout-savings').textContent = '₹' + savings.toLocaleString('en-IN');
-  document.getElementById('checkout-total').textContent = '₹' + subtotal.toLocaleString('en-IN');
+  document.getElementById('checkout-savings').textContent  = '₹' + savings.toLocaleString('en-IN');
+  document.getElementById('checkout-platform-fee').textContent = '₹' + PLATFORM_FEE;
+
+  if (deliveryFee === 0) {
+    document.getElementById('checkout-delivery').textContent = 'FREE';
+    document.getElementById('checkout-delivery').className = 'text-green-600 font-medium';
+    document.getElementById('checkout-free-delivery-msg').classList.remove('hidden');
+  } else {
+    document.getElementById('checkout-delivery').textContent = '₹' + deliveryFee;
+    document.getElementById('checkout-delivery').className = 'text-gray-700';
+    document.getElementById('checkout-free-delivery-msg').classList.add('hidden');
+  }
+
+  document.getElementById('checkout-total').textContent = '₹' + total.toLocaleString('en-IN');
+
+  // Store for placeOrder
+  state.checkoutTotal = total;
+  state.deliveryFee = deliveryFee;
+
   closeCart();
   openModal('checkout-modal');
 }
@@ -330,10 +354,22 @@ async function placeOrder() {
   const address = document.getElementById('checkout-address').value.trim();
   const payment = document.getElementById('checkout-payment').value;
   if (!address) return toast('Please enter delivery address');
-  const res = await api('POST', '/api/orders/place', { address, payment_method: payment });
+
+  const PLATFORM_FEE = 5;
+  const deliveryFee = state.deliveryFee || 0;
+
+  const res = await api('POST', '/api/orders/place', {
+    address,
+    payment_method: payment,
+    delivery_fee: deliveryFee,
+    platform_fee: PLATFORM_FEE
+  });
+
   if (res.success) {
     closeModal('checkout-modal');
     state.cart = [];
+    state.checkoutTotal = 0;
+    state.deliveryFee = 0;
     updateCartUI();
     toast('Order placed successfully! 🎉');
     showPage('orders');
